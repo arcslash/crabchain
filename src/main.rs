@@ -1,5 +1,11 @@
 use chrono::prelude::*;
-struct Transaction{}
+#[derive(Debug)]
+struct Transaction{
+    sender: String,
+    recipient: String,
+    amount: u64
+}
+#[derive(Debug)]
 struct Block {
     index: u64,
     timestamp: String,
@@ -17,7 +23,7 @@ impl Block {
            data: Vec<Transaction>) -> Self{
         
         let new_block = Block {
-            index: index,
+            index,
             timestamp: Utc::now().to_string(),
             data,
             previous_hash,
@@ -25,10 +31,13 @@ impl Block {
             nonce: 0
         };
         new_block
-        
-        
     }
 }
 fn main() {
-    println!("Hello, world!");
+    let block = Block::new(
+        0,
+        String::new(),
+        vec![]
+    );
+    println!("{:?}", block);
 }
