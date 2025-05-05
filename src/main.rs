@@ -1,4 +1,6 @@
 use chrono::prelude::*;
+use sha2::{Digest, Sha256};
+
 #[derive(Debug)]
 struct Transaction{
     sender: String,
@@ -31,6 +33,23 @@ impl Block {
             nonce: 0
         };
         new_block
+    }
+    
+    
+    fn calculate_hash(&self) -> String{
+        let mut hasher = Sha256::new();
+        hasher.update(self.index.to_string());
+        let result = hasher.finalize();
+        let hash_hex = format!("{:x}", result);
+        hash_hex
+    }
+}
+
+
+
+impl Transaction {
+    fn new(sender: String, recipient: String, amount: u64) -> Self{
+        Transaction{sender, recipient, amount}
     }
 }
 fn main() {
