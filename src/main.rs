@@ -1,3 +1,4 @@
+use std::fmt;
 use chrono::prelude::*;
 use sha2::{Digest, Sha256};
 
@@ -24,7 +25,7 @@ impl Block {
            previous_hash: String,
            data: Vec<Transaction>) -> Self{
         
-        let new_block = Block {
+        let mut new_block = Block {
             index,
             timestamp: Utc::now().to_string(),
             data,
@@ -32,13 +33,31 @@ impl Block {
             hash: String::new(),
             nonce: 0
         };
+        new_block.hash = new_block.calculate_hash();
         new_block
     }
-    
-    
+
+
     fn calculate_hash(&self) -> String{
+
+        let tx_strings: Vec<String> = self.data.iter()
+            .map(|tx| tx.to_string())
+            .collect();
+        let joined_txs = tx_strings.join(",");
+
+        // Combine all into one string
+        let serialized = format!(
+            "{}{}{}{}{}",
+            self.index,
+            self.timestamp,
+            joined_txs,
+            self.previous_hash,
+            self.nonce
+        );
+
+
         let mut hasher = Sha256::new();
-        hasher.update(self.index.to_string());
+        hasher.update(serialized); // change to serialized block
         let result = hasher.finalize();
         let hash_hex = format!("{:x}", result);
         hash_hex
@@ -52,11 +71,24 @@ impl Transaction {
         Transaction{sender, recipient, amount}
     }
 }
+
+impl fmt::Display for Transaction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}->{}:{}", self.sender, self.recipient, self.amount)
+    }
+
+}
 fn main() {
+    let tx1 = Transaction::new("Alice".to_string(), "Bob".to_string(), 10);
+    let tx2 = Transaction::new("Bob".to_string(), "Charlie".to_string(), 5);
+
     let block = Block::new(
         0,
         String::new(),
-        vec![]
+        vec![tx1, tx2],
     );
-    println!("{:?}", block);
+
+    println!("{:#?}", block);
+    println!("Block hash: {}", block.hash);
 }
+
