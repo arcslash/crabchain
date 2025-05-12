@@ -36,6 +36,16 @@ impl Block {
         new_block.hash = new_block.calculate_hash();
         new_block
     }
+    
+    fn mine(&mut self, difficulty: usize){
+        let target = "0".repeat(difficulty);
+        while !self.hash.starts_with(&target) {
+            self.nonce += 1;
+            self.hash = self.calculate_hash();
+        }
+        println!("Mined block with hash: {}", self.hash);
+        
+    }
 
 
     fn calculate_hash(&self) -> String{
@@ -65,7 +75,6 @@ impl Block {
 }
 
 
-
 impl Transaction {
     fn new(sender: String, recipient: String, amount: u64) -> Self{
         Transaction{sender, recipient, amount}
@@ -76,17 +85,18 @@ impl fmt::Display for Transaction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}->{}:{}", self.sender, self.recipient, self.amount)
     }
-
 }
+
 fn main() {
     let tx1 = Transaction::new("Alice".to_string(), "Bob".to_string(), 10);
     let tx2 = Transaction::new("Bob".to_string(), "Charlie".to_string(), 5);
 
-    let block = Block::new(
+    let mut block = Block::new(
         0,
         String::new(),
         vec![tx1, tx2],
     );
+    block.mine(4);
 
     println!("{:#?}", block);
     println!("Block hash: {}", block.hash);
