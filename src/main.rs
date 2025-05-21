@@ -18,7 +18,10 @@ struct Block {
     nonce: u64
 }
 
-
+#[derive(Debug)]
+struct Blockchain {
+    chain: Vec<Block>,
+}
 
 impl Block {
     fn new(index: u64,
@@ -49,7 +52,6 @@ impl Block {
 
 
     fn calculate_hash(&self) -> String{
-
         let tx_strings: Vec<String> = self.data.iter()
             .map(|tx| tx.to_string())
             .collect();
@@ -74,6 +76,22 @@ impl Block {
     }
 }
 
+impl Blockchain {
+    fn new() -> Self {
+        let genesis_block = Block::new(0, String::new(), vec![]);
+        Blockchain{
+            chain: vec![genesis_block]
+        }
+    }
+    fn add_block(&mut self, data: Vec<Transaction>, diffuilty: usize) {
+        let last_block = self.chain.last().unwrap();
+        let new_index = last_block.index + 1;
+        let prev_hash = last_block.hash.clone();
+        let mut new_block = Block::new(new_index, prev_hash, data);
+        new_block.mine(diffuilty);
+        self.chain.push(new_block)
+    }
+}
 
 impl Transaction {
     fn new(sender: String, recipient: String, amount: u64) -> Self{
@@ -88,17 +106,15 @@ impl fmt::Display for Transaction {
 }
 
 fn main() {
-    let tx1 = Transaction::new("Alice".to_string(), "Bob".to_string(), 10);
-    let tx2 = Transaction::new("Bob".to_string(), "Charlie".to_string(), 5);
-
-    let mut block = Block::new(
-        0,
-        String::new(),
-        vec![tx1, tx2],
+    let mut crabchain = Blockchain::new();
+    crabchain.add_block(
+        vec![Transaction::new("Alice".into(), "Bob".into(), 5)],
+        4
     );
-    block.mine(4);
+    crabchain.add_block(vec![
+        Transaction::new("Bob".into(), "Charlie".into(), 5)
+    ], 4);
 
-    println!("{:#?}", block);
-    println!("Block hash: {}", block.hash);
+    println!("{:#?}", crabchain);
 }
 
