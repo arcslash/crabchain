@@ -1,6 +1,7 @@
 mod blockchain;
 mod block;
 mod transaction;
+mod wallet;
 
 use transaction::Transaction;
 use blockchain::Blockchain;
@@ -22,20 +23,20 @@ fn main() {
         Transaction::new("Alex".into(), "Ishara".into(), 80)
     ], 4);
 
-    
-    
+
+
     let mut valid = crabchain.is_valid();
     // Is the built chain valid?
     println!("Is CrabChain valid {}", valid); // should return up true
-    
-    
+
+
     // let's tamper a bit
     /*
     crabchain.chain[1].data[0].amount = 10;
     valid = crabchain.is_valid();
     println!("Is CrabChain valid {}", valid); // should return up false
     */
-    
+
     println!("{:#?}", crabchain);
 }
 
