@@ -5,6 +5,7 @@ mod wallet;
 
 use transaction::Transaction;
 use blockchain::Blockchain;
+use wallet::Wallet;
 
 fn main() {
     let mut crabchain = Blockchain::new();
@@ -25,7 +26,7 @@ fn main() {
 
 
 
-    let mut valid = crabchain.is_valid();
+    let valid = crabchain.is_valid();
     // Is the built chain valid?
     println!("Is CrabChain valid {}", valid); // should return up true
 
@@ -38,5 +39,8 @@ fn main() {
     */
 
     println!("{:#?}", crabchain);
+
+    let wallet = Wallet::new();
+    println!("Public key: {}", wallet.get_public_key());
 }
 
