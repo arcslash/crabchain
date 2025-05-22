@@ -1,12 +1,12 @@
 use chrono::Utc;
 use sha2::{Digest, Sha256};
-use crate::transaction::Transaction;
+use crate::signed_transaction::SignedTransaction;
 
 #[derive(Debug)]
 pub struct Block {
     pub index: u64,
     pub timestamp: String,
-    pub data: Vec<Transaction>,
+    pub data: Vec<SignedTransaction>,
     pub previous_hash: String,
     pub hash: String,
     pub nonce: u64
@@ -14,7 +14,7 @@ pub struct Block {
 impl Block {
     pub fn new(index: u64,
            previous_hash: String,
-           data: Vec<Transaction>) -> Self{
+           data: Vec<SignedTransaction>) -> Self{
 
         let mut new_block = Block {
             index,

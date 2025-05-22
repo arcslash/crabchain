@@ -1,4 +1,5 @@
 use crate::block::Block;
+use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
 
 #[derive(Debug)]
@@ -13,11 +14,19 @@ impl Blockchain {
             chain: vec![genesis_block]
         }
     }
-    pub fn add_block(&mut self, data: Vec<Transaction>, diffuilty: usize) {
+    pub fn add_block(&mut self, data: Vec<SignedTransaction>, diffuilty: usize) {
         let last_block = self.chain.last().unwrap();
         let new_index = last_block.index + 1;
         let prev_hash = last_block.hash.clone();
+
+        for tx in &data {
+            if !tx.is_valid() {
+                panic!("Invalid transaction detected!");
+            }
+        }
+
         let mut new_block = Block::new(new_index, prev_hash, data);
+        
         new_block.mine(diffuilty);
         self.chain.push(new_block)
     }
