@@ -2,7 +2,9 @@ mod blockchain;
 mod block;
 mod transaction;
 mod wallet;
+mod signed_transaction;
 
+use ed25519_dalek::Verifier;
 use transaction::Transaction;
 use blockchain::Blockchain;
 use wallet::Wallet;
@@ -42,5 +44,16 @@ fn main() {
 
     let wallet = Wallet::new();
     println!("Public key: {}", wallet.get_public_key());
+    
+    let msg = b"hello crabchain";
+    let signature = wallet.sign_message(msg);
+    println!("Signature: {:?}", signature.to_bytes());
+    
+    let public_key = wallet.get_verifying_key();
+    let is_valid = public_key.verify(msg, &signature).is_ok();
+    println!("Signature valid? {}", is_valid);
+    
+    
+    
 }
 
