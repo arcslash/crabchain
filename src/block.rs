@@ -28,7 +28,7 @@ impl Block {
         new_block
     }
 
-    pub fn mine(&mut self, difficulty: usize){
+    pub fn mine(&mut self, difficulty: usize) {
         let target = "0".repeat(difficulty);
         while !self.hash.starts_with(&target) {
             self.nonce += 1;
@@ -39,7 +39,7 @@ impl Block {
     }
 
 
-    pub fn calculate_hash(&self) -> String{
+    pub fn calculate_hash(&self) -> String {
         let tx_strings: Vec<String> = self.data.iter()
             .map(|tx| tx.to_string())
             .collect();

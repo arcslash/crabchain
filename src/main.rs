@@ -31,8 +31,10 @@ fn main() {
     // Transaction will be in two steps now\
     let sender_wallet = Wallet::new();
     // 1. Create a transaction
+    let reward_tx = Transaction::new("SYSTEM".into(), "Alice".into(), 1000);
     let tx1 = Transaction::new("Alice".into(), "Bob".into(), 100);
     let message = tx1.to_string();
+    println!("{}", message);
     let sig = sender_wallet.sign_message(message.as_bytes());
     let signed_tx = SignedTransaction{
         transaction: tx1,
@@ -67,8 +69,13 @@ fn main() {
     // let public_key = wallet.get_verifying_key();
     // let is_valid = public_key.verify(msg, &signature).is_ok();
     // println!("Signature valid? {}", is_valid);
-    
-    
-    
+
+    let balances = crabchain.get_balances();
+    println!("\nFinal balances:");
+    for (user, balance) in balances {
+        println!("{}: {}", user, balance);
+    }
+
+
 }
 

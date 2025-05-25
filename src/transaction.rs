@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[derive(Debug)]
-pub struct Transaction{
+pub struct Transaction {
     pub sender: String,
     pub recipient: String,
     pub amount: u64
