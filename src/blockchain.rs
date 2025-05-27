@@ -2,11 +2,15 @@ use std::collections::HashMap;
 use crate::block::Block;
 use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
+use crate::wallet::Wallet;
 
 #[derive(Debug)]
 pub struct Blockchain {
     chain: Vec<Block>,
 }
+
+const BLOCK_REWARD: u64 = 100;
+const SYSTEM_ACCOUNT: &str = "SYSTEM";
 
 impl Blockchain {
     pub fn new() -> Self {
@@ -15,7 +19,27 @@ impl Blockchain {
             chain: vec![genesis_block]
         }
     }
-    pub fn add_block(&mut self, data: Vec<SignedTransaction>, difficulty: usize) {
+    pub fn add_block(&mut self, mut data: Vec<SignedTransaction>, difficulty: usize, miner_address: String) {
+        
+        // Adding Miner Rewards here
+        let system_wallet = Wallet::new();
+        
+        let reward_tx = Transaction::new(
+            SYSTEM_ACCOUNT.into(),
+            miner_address,
+            BLOCK_REWARD, // TODO: Make this a calculated value later
+        );
+        
+        let reward_signature = system_wallet.sign_message(reward_tx.to_string().as_bytes());
+        let reward_signed_tx = SignedTransaction{
+            transaction: reward_tx,
+            public_key: system_wallet.get_verifying_key(),
+            signature: reward_signature
+        };
+        data.insert(0, reward_signed_tx);
+        
+        
+        
         // lets check balances
         let mut balances = self.get_balances();
 
@@ -23,13 +47,19 @@ impl Blockchain {
             let sender = &signed_tx.transaction.sender;
             let amount = signed_tx.transaction.amount;
             
-            let balance = balances.get(sender).cloned().unwrap_or(0);
-            if balance < amount {
-                panic!("Insufficient funds for {}", sender);
-            }
+            if sender != "SYSTEM" {
+                let balance = balances.get(sender).cloned().unwrap_or(0);
+                if balance < amount {
+                    panic!("Insufficient funds for {}", sender);
+                }
 
-            // Simulate the transfer so multiple txs in one block are validated
-            *balances.entry(sender.clone()).or_insert(0) -= amount;
+                // Simulate the transfer so multiple txs in one block are validated
+                *balances.entry(sender.clone()).or_insert(0) -= amount;
+            }
+            
+            
+            
+            
             *balances.entry(signed_tx.transaction.recipient.clone()).or_insert(0) += amount;
         }
 
@@ -74,8 +104,10 @@ impl Blockchain {
                 let recipient = signed_tx.transaction.recipient.clone();
                 let amount = signed_tx.transaction.amount;
 
-                // Subtract from sender
-                *balances.entry(sender).or_insert(0) -= amount;
+                if sender != "SYSTEM" {
+                    // Subtract from sender
+                    *balances.entry(sender).or_insert(0) -= amount;
+                }
                 // Add to recipient
                 *balances.entry(recipient).or_insert(0) += amount;
             }
