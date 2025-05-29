@@ -1,6 +1,6 @@
 # 🦀 CrabChain
 
-**CrabChain** is a minimal blockchain written in Rust — built to help understand how blockchains work under the hood while learning idiomatic Rust.
+**CrabChain** is a minimal blockchain written in Rust.
 
 ---
 
