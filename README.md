@@ -71,16 +71,3 @@ cargo run -- balances
 - `clap` for command-line parsing
 
 ---
-
-## 🚀 Learning Goals
-
-- Understand blockchain fundamentals: block structure, PoW, transactions
-- Practice secure Rust: lifetimes, borrowing, enums, traits
-- Build toward:
-    - Smart contract execution
-    - Persistent chain storage
-    - Peer-to-peer networking and consensus
-
----
-
-CrabChain is a learning-first project. Code is kept simple, clear, and well-commented — perfect for blockchain beginners and Rust learners alike.
