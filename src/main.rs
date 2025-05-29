@@ -12,7 +12,7 @@ use blockchain::Blockchain;
 use wallet::Wallet;
 use crate::cli::{Cli, Commands};
 use crate::signed_transaction::SignedTransaction;
-
+use crate::wallet::WalletFile;
 // fn main() {
 //     let mut crabchain = Blockchain::new();
 //     
@@ -55,11 +55,18 @@ fn main() {
     
     match cli.command{
         Commands::WalletNew => {
-            println!("Generating a new Wallet");
+            println!("Generating a new Wallet...");
+            let wallet = Wallet::new(); 
+            wallet.save_to_file("wallet.json");
+            println!("🔑 Public address: {}", wallet.get_public_key());
+            println!("Wallet saved to wallet.json");
+            
         }
         
         Commands::WalletAddress { keyfile } => {
             println!("Getting the address of the wallet {}", keyfile);
+            let wallet = Wallet::from_file("wallet.json");
+            println!("Wallet address: {}", wallet.get_public_key());
         }
         
         Commands::Send { from, to, amount } => {
