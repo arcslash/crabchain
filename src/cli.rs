@@ -21,6 +21,8 @@ pub enum Commands {
     
     Send{
         #[arg(long)]
+        keyfile: String,
+        #[arg(long)]
         from: String,
         #[arg(long)]
         to: String,

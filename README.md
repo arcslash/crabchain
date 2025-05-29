@@ -1,3 +1,86 @@
-# CrabChain 🦀⛓️
+# 🦀 CrabChain
 
-CrabChain is a simple blockchain project written from scratch in Rust.
+**CrabChain** is a minimal blockchain written in Rust — built to help understand how blockchains work under the hood while learning idiomatic Rust.
+
+---
+
+## ✅ Features Implemented
+
+- Custom blockchain with:
+    - Block struct with hash, nonce, PoW mining, and timestamp
+    - Hash chaining between blocks
+    - Block validation logic
+- Transaction model with sender, recipient, and amount
+- Public-private key cryptography using Ed25519
+    - Wallets with key generation
+    - Message signing and verification
+- `SignedTransaction` support with signature serialization
+- CLI commands via [`clap`](https://docs.rs/clap)
+- Balance tracking via chain analysis
+- Mempool storage and JSON persistence
+
+---
+
+## 🛠️ Usage
+
+Run via:
+
+```bash
+cargo run -- <COMMAND>
+```
+
+### 🔐 Wallet Management
+
+```bash
+# Generate a new wallet
+cargo run -- wallet-new
+
+# Get the wallet's public address
+cargo run -- wallet-address --keyfile wallet.json
+```
+
+### 💸 Transactions
+
+```bash
+# Sign and prepare a transaction (adds to mempool)
+cargo run -- send --keyfile wallet.json --from Alice --to Bob --amount 50
+```
+
+### ⛏️ Mining
+
+```bash
+# Mine a new block and include transactions
+cargo run -- mine --miner Alice
+```
+
+### 💰 Balances
+
+```bash
+# Get final balances after mining
+cargo run -- balances
+```
+
+---
+
+## 📦 Dependencies
+
+- `chrono` for timestamps
+- `sha2` for block hashing
+- `ed25519-dalek` for cryptographic signatures
+- `serde` and `serde_json` for wallet/key serialization
+- `clap` for command-line parsing
+
+---
+
+## 🚀 Learning Goals
+
+- Understand blockchain fundamentals: block structure, PoW, transactions
+- Practice secure Rust: lifetimes, borrowing, enums, traits
+- Build toward:
+    - Smart contract execution
+    - Persistent chain storage
+    - Peer-to-peer networking and consensus
+
+---
+
+CrabChain is a learning-first project. Code is kept simple, clear, and well-commented — perfect for blockchain beginners and Rust learners alike.
