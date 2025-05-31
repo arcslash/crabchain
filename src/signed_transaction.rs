@@ -1,5 +1,5 @@
 use std::fmt;
-use ed25519_dalek::{Signature, Verifier, VerifyingKey};
+use ed25519_dalek::{Signature, Verifier, VerifyingKey, SignatureError};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::Error;
 use crate::transaction::Transaction;
@@ -7,7 +7,7 @@ use crate::transaction::Transaction;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SignedTransaction {
     pub transaction: Transaction,
-    
+
     #[serde(serialize_with = "serialize_verifying_key", deserialize_with = "deserialize_verifying_key")]
     pub public_key: VerifyingKey,
     #[serde(serialize_with = "serialize_signature", deserialize_with = "deserialize_signature")]
@@ -15,9 +15,6 @@ pub struct SignedTransaction {
 }
 
 // Serialization and Deserialization functions
-
-/// Serialize a Signature as hex string
-/// 
 pub fn serialize_verifying_key<S>(key: &VerifyingKey, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
@@ -71,6 +68,19 @@ impl SignedTransaction {
         let message = self.transaction.to_string();
         self.public_key.verify(message.as_bytes(), &self.signature).is_ok()
     }
+
+    // TODO: Adding proper rewards when mining
+    //
+    // pub fn reward(tx: Transaction) -> Self {
+    //     let dummy_pubkey = VerifyingKey::from_bytes(&[0u8; 32]).unwrap(); // 32 bytes for Ed25519 pub key
+    //     let dummy_sig = Signature::from_bytes(&[0u8; 64].into()).unwrap(); // 64 bytes for Ed25519 sig
+    //
+    //     SignedTransaction {
+    //         transaction: tx,
+    //         public_key: dummy_pubkey,
+    //         signature: dummy_sig,
+    //     }
+    // }
 }
 
 impl fmt::Display for SignedTransaction {

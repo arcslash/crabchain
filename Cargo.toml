@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.40"
-ed25519-dalek = { version = "2.1.1", features = ["rand_core"] }
+ed25519-dalek = { version = "2.1.1", features = ["rand_core","serde"] }
 hex = "0.4.3"
 rand_core = { version = "0.6.4", features = ["getrandom"] }
 sha2 = "0.10.9"

@@ -1,16 +1,28 @@
 use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 use crate::block::Block;
 use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
 use crate::wallet::Wallet;
 
+// TODO: implement serialization
+//#[derive(Debug, Serialize, Deserialize)]
 #[derive(Debug)]
 pub struct Blockchain {
+    //#[serde(serialize_with = "serialize_chain", deserialize_with = "deserialize_chain")]
     chain: Vec<Block>,
 }
 
 const BLOCK_REWARD: u64 = 100;
 const SYSTEM_ACCOUNT: &str = "SYSTEM";
+
+// pub fn serialize_chain(){
+// 
+// }
+// 
+// pub fn deserialize_chain(){
+// 
+// }
 
 impl Blockchain {
     pub fn new() -> Self {
