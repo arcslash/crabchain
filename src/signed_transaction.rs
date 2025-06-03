@@ -4,7 +4,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::Error;
 use crate::transaction::Transaction;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SignedTransaction {
     pub transaction: Transaction,
 
@@ -69,18 +69,17 @@ impl SignedTransaction {
         self.public_key.verify(message.as_bytes(), &self.signature).is_ok()
     }
 
-    // TODO: Adding proper rewards when mining
-    //
-    // pub fn reward(tx: Transaction) -> Self {
-    //     let dummy_pubkey = VerifyingKey::from_bytes(&[0u8; 32]).unwrap(); // 32 bytes for Ed25519 pub key
-    //     let dummy_sig = Signature::from_bytes(&[0u8; 64].into()).unwrap(); // 64 bytes for Ed25519 sig
-    //
-    //     SignedTransaction {
-    //         transaction: tx,
-    //         public_key: dummy_pubkey,
-    //         signature: dummy_sig,
-    //     }
-    // }
+    pub fn reward(tx: Transaction) -> Self {
+        // Create fake key and signature for SYSTEM reward tx
+        let fake_pubkey = VerifyingKey::from_bytes(&[0u8; 32]).expect("Valid pubkey bytes");
+        let fake_signature = Signature::try_from(&[0u8; 64][..]).expect("Valid signature bytes");
+
+        Self {
+            transaction: tx,
+            public_key: fake_pubkey,
+            signature: fake_signature,
+        }
+    }
 }
 
 impl fmt::Display for SignedTransaction {

@@ -67,45 +67,47 @@ fn main() {
 
             println!("✅ Transaction saved to mempool.json");
         }
-        
-        
-        Commands::Mine {miner} => {
-            // println!("⛏️ Mining block for {}", miner);
-            // let chain_file = "chain.json";
-            // let mempool_file = "mempool.json";
-            //
-            // // Load blockchain
-            // let mut crabchain = if std::path::Path::new(chain_file).exists() {
-            //     let chain_data = std::fs::read_to_string(chain_file).unwrap();
-            //     serde_json::from_str(&chain_data).unwrap()
-            // } else {
-            //     Blockchain::new()
-            // };
-            //
-            // // Load mempool
-            // if std::path::Path::new(mempool_file).exists() {
-            //     let contents = std::fs::read_to_string(mempool_file).unwrap();
-            //     let mut mempool: Vec<SignedTransaction> = serde_json::from_str(&contents).unwrap();
-            //
-            //     // Add mining reward
-            //     let reward_tx = Transaction::new("SYSTEM".into(), miner.clone(), 50);
-            //     let reward = SignedTransaction::reward(reward_tx); // Add this helper in `SignedTransaction`
-            //     mempool.push(reward);
-            //
-            //     crabchain.add_block(mempool, 4, miner);
-            //
-            //     // Save updated chain
-            //     let updated = serde_json::to_string_pretty(&crabchain).unwrap();
-            //     std::fs::write(chain_file, updated).unwrap();
-            //     println!("✅ Block mined and added to chain!");
-            //
-            //     // Clear mempool
-            //     std::fs::remove_file(mempool_file).unwrap();
-            // } else {
-            //     println!("⚠️ No transactions in mempool");
-            // }
+
+
+        Commands::Mine { miner } => {
+            println!("⛏️ Mining block for {}", miner);
+            let chain_file = "chain.json";
+            let mempool_file = "mempool.json";
+
+            // Load blockchain
+            let mut crabchain = if std::path::Path::new(chain_file).exists() {
+                let chain_data = std::fs::read_to_string(chain_file).unwrap();
+                serde_json::from_str(&chain_data).unwrap()
+            } else {
+                Blockchain::new()
+            };
+
+            // Load mempool
+            if std::path::Path::new(mempool_file).exists() {
+                let contents = std::fs::read_to_string(mempool_file).unwrap();
+                let mut mempool: Vec<SignedTransaction> = serde_json::from_str(&contents).unwrap();
+
+                // Add mining reward
+                let reward_tx = Transaction::new("SYSTEM".into(), miner.clone(), 50);
+                let reward = SignedTransaction::reward(reward_tx);
+                mempool.push(reward);
+
+                // Mine the block and add it
+                crabchain.add_block(mempool, 4, miner);
+
+                // Save the updated chain
+                let updated = serde_json::to_string_pretty(&crabchain).unwrap();
+                std::fs::write(chain_file, updated).unwrap();
+                println!("✅ Block mined and added to chain!");
+
+                // Clear the mempool
+                std::fs::remove_file(mempool_file).unwrap();
+            } else {
+                println!("⚠️ No transactions in mempool");
+            }
         }
-        
+
+
         Commands::Balances =>{
             println!("📊 Balances:");
             let crabchain = Blockchain::new(); // replace with load if needed
