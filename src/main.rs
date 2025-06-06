@@ -93,6 +93,7 @@ fn main() {
                 mempool.push(reward);
 
                 // Mine the block and add it
+                crabchain.validate_mempool(mempool.as_slice());
                 crabchain.add_block(mempool, 4, miner);
 
                 // Save the updated chain

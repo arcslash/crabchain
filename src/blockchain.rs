@@ -20,30 +20,40 @@ const SYSTEM_ACCOUNT: &str = "SYSTEM";
 const BLOCKCHAIN_FILE: &str = "chain.json";
 
 
-// pub fn serialize_chain(blockchain: &Blockchain) {
-//     let json = serde_json::to_string_pretty(blockchain)
-//         .expect("Failed to serialize blockchain");
-//     fs::write(BLOCKCHAIN_FILE, json).expect("Failed to write blockchain to file");
-// }
-// 
-// pub fn deserialize_chain() -> Blockchain {
-//     if Path::new(BLOCKCHAIN_FILE).exists() {
-//         let content = fs::read_to_string(BLOCKCHAIN_FILE)
-//             .expect("Failed to read blockchain file");
-//         serde_json::from_str(&content).expect("Failed to deserialize blockchain")
-//     } else {
-//         println!("No chain file found. Creating new blockchain.");
-//         Blockchain::new()
-//     }
-// }
-
-
 impl Blockchain {
     pub fn new() -> Self {
         let genesis_block = Block::new(0, String::new(), vec![]);
         Blockchain{
             chain: vec![genesis_block]
         }
+    }
+
+    pub fn validate_mempool(&mut self, mempool: &[SignedTransaction]) -> bool {
+        let mut temp_balances = self.get_balances();
+
+        for tx in mempool {
+            if !tx.is_valid() {
+                println!("⛔ Invalid signature in mempool tx: {:?}", tx);
+                return false;
+            }
+
+            if tx.transaction.sender != "SYSTEM" {
+                let sender = &tx.transaction.sender;
+                let amount = tx.transaction.amount;
+                let balance = temp_balances.get(sender).cloned().unwrap_or(0);
+
+                if balance < amount {
+                    println!("⚠️ Insufficient balance in mempool for {}", sender);
+                    return false;
+                }
+
+                *temp_balances.entry(sender.clone()).or_insert(0) -= amount;
+            }
+
+            *temp_balances.entry(tx.transaction.recipient.clone()).or_insert(0) += tx.transaction.amount;
+        }
+
+        true
     }
     pub fn add_block(&mut self, mut data: Vec<SignedTransaction>, difficulty: usize, miner_address: String) {
         
