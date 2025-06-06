@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use crate::block::Block;
 use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
@@ -11,7 +11,7 @@ use crate::wallet::Wallet;
 // TODO: fix se/desrialization function
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Blockchain {
-    #[serde(serialize_with = "serialize_chain", deserialize_with = "deserialize_chain")]
+    // #[serde(serialize_with = "serialize_chain", deserialize_with = "deserialize_chain")]
     chain: Vec<Block>,
 }
 
@@ -19,22 +19,23 @@ const BLOCK_REWARD: u64 = 100;
 const SYSTEM_ACCOUNT: &str = "SYSTEM";
 const BLOCKCHAIN_FILE: &str = "chain.json";
 
-pub fn serialize_chain(blockchain: &Blockchain) {
-    let json = serde_json::to_string_pretty(blockchain)
-        .expect("Failed to serialize blockchain");
-    fs::write(BLOCKCHAIN_FILE, json).expect("Failed to write blockchain to file");
-}
 
-pub fn deserialize_chain() -> Blockchain {
-    if Path::new(BLOCKCHAIN_FILE).exists() {
-        let content = fs::read_to_string(BLOCKCHAIN_FILE)
-            .expect("Failed to read blockchain file");
-        serde_json::from_str(&content).expect("Failed to deserialize blockchain")
-    } else {
-        println!("No chain file found. Creating new blockchain.");
-        Blockchain::new()
-    }
-}
+// pub fn serialize_chain(blockchain: &Blockchain) {
+//     let json = serde_json::to_string_pretty(blockchain)
+//         .expect("Failed to serialize blockchain");
+//     fs::write(BLOCKCHAIN_FILE, json).expect("Failed to write blockchain to file");
+// }
+// 
+// pub fn deserialize_chain() -> Blockchain {
+//     if Path::new(BLOCKCHAIN_FILE).exists() {
+//         let content = fs::read_to_string(BLOCKCHAIN_FILE)
+//             .expect("Failed to read blockchain file");
+//         serde_json::from_str(&content).expect("Failed to deserialize blockchain")
+//     } else {
+//         println!("No chain file found. Creating new blockchain.");
+//         Blockchain::new()
+//     }
+// }
 
 
 impl Blockchain {

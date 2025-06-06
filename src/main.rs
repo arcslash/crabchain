@@ -110,7 +110,7 @@ fn main() {
 
         Commands::Balances =>{
             println!("📊 Balances:");
-            let crabchain = Blockchain::new(); // replace with load if needed
+            let crabchain = Blockchain::new(); 
             let balances = crabchain.get_balances();
 
             for (address, balance) in balances {

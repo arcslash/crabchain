@@ -4,3 +4,7 @@ Cargo.lock
 .DS_Store
 .idea/
 *.iml
+
+# current application specifics
+wallet.json
+mempool.json
