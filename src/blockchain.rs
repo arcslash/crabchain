@@ -7,8 +7,6 @@ use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
 use crate::wallet::Wallet;
 
-
-// TODO: fix se/desrialization function
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Blockchain {
     // #[serde(serialize_with = "serialize_chain", deserialize_with = "deserialize_chain")]
@@ -58,7 +56,9 @@ impl Blockchain {
     pub fn add_block(&mut self, mut data: Vec<SignedTransaction>, difficulty: usize, miner_address: String) {
         
         // Adding Miner Rewards here
-        let system_wallet = Wallet::new();
+        // let system_wallet = Wallet::new();
+        // system_wallet.save_to_file("wallet.json");
+        let system_wallet = Wallet::from_file("wallets/system_wallet.json");
         
         let reward_tx = Transaction::new(
             SYSTEM_ACCOUNT.into(),

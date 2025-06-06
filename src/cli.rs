@@ -35,5 +35,9 @@ pub enum Commands {
         #[arg(long)]
         miner: String,
 
-    }
+    },
+
+    WalletList
+    
+    
 }

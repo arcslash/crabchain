@@ -5,6 +5,7 @@ mod wallet;
 mod signed_transaction;
 mod cli;
 
+use std::fs;
 use clap::Parser;
 use ed25519_dalek::Verifier;
 use wallet::Wallet;
@@ -12,6 +13,7 @@ use crate::blockchain::Blockchain;
 use crate::cli::{Cli, Commands};
 use crate::signed_transaction::SignedTransaction;
 use crate::transaction::Transaction;
+use crate::wallet::{register_wallet, WalletInfo};
 
 // Moving into CLI control
 fn main() {
@@ -21,14 +23,39 @@ fn main() {
         Commands::WalletNew => {
             println!("Generating a new Wallet...");
             let wallet = Wallet::new();
-            wallet.save_to_file("wallet.json");
-            println!("🔑 Public address: {}", wallet.get_public_key());
-            println!("Wallet saved to wallet.json");
+
+            // Prompt for filename
+            let wallet_key_filename = inquire::Text::new("Save wallet key as (without .json):")
+                .prompt()
+                .unwrap();
+
+            // Ensure wallets directory exists
+            fs::create_dir_all("wallets").expect("Failed to create wallets directory");
+
+            // Construct full path
+            let wallet_file = format!("wallets/{}.json", wallet_key_filename);
+
+            // Save wallet key
+            wallet.save_to_file(&wallet_file);
+
+            let public_key = wallet.get_public_key();
+            println!("🔑 Public address: {}", public_key);
+
+            // Prompt for user-friendly name
+            let name = inquire::Text::new("Enter a name for this wallet:")
+                .prompt()
+                .unwrap();
+
+            // Register wallet metadata
+            register_wallet(&name, &public_key, &wallet_file);
+
+            println!("💾 Wallet saved to {} and registered as '{}'", wallet_file, name);
         }
-        
+
+
         Commands::WalletAddress { keyfile } => {
             println!("Getting the address of the wallet {}", keyfile);
-            let wallet = Wallet::from_file("wallet.json");
+            let wallet = Wallet::from_file("wallets/system_wallet.json");
             println!("Wallet address: {}", wallet.get_public_key());
         }
         
@@ -118,7 +145,16 @@ fn main() {
                 println!("{}: {}", address, balance);
             }
         }
-        
+
+        Commands::WalletList => {
+            let data = std::fs::read_to_string("wallets.json").unwrap();
+            let wallets: Vec<WalletInfo> = serde_json::from_str(&data).unwrap();
+            for w in wallets {
+                println!("{} => {}", w.name, w.public_key);
+            }
+        }
+
+
     }
     
     

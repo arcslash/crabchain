@@ -6,5 +6,5 @@ Cargo.lock
 *.iml
 
 # current application specifics
-wallet.json
+system_wallet.json
 mempool.json

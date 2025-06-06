@@ -36,14 +36,14 @@ cargo run -- <COMMAND>
 cargo run -- wallet-new
 
 # Get the wallet's public address
-cargo run -- wallet-address --keyfile wallet.json
+cargo run -- wallet-address --keyfile system_wallet.json
 ```
 
 ### 💸 Transactions
 
 ```bash
 # Sign and prepare a transaction (adds to mempool)
-cargo run -- send --keyfile wallet.json --from Alice --to Bob --amount 50
+cargo run -- send --keyfile system_wallet.json --from Alice --to Bob --amount 50
 ```
 
 ### ⛏️ Mining
@@ -58,6 +58,13 @@ cargo run -- mine --miner Alice
 ```bash
 # Get final balances after mining
 cargo run -- balances
+```
+
+### 💰 View all the current wallets
+
+```bash
+# Get list of wallets
+cargo run -- wallet-list
 ```
 
 ---

@@ -9,6 +9,13 @@ pub struct Wallet {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct WalletInfo{
+    pub name: String,
+    pub public_key: String,
+    pub keyfile: String,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct WalletFile{
     pub private_key: Vec<u8>
 }
@@ -46,9 +53,31 @@ impl Wallet {
     }
     
     pub fn from_file(path: &str) -> Self{
-        let data = fs::read_to_string(path).expect("Error reading wallet file");
+        let data = fs::read_to_string(path).expect(&format!("Error reading wallet file '{}'", path));
         let wallet_file: WalletFile = serde_json::from_str(&data).unwrap();
         let signing_key = SigningKey::from_bytes(&wallet_file.private_key.try_into().unwrap());
         Wallet { signing_key }
     }
 }
+
+pub fn register_wallet(name: &str, public_key: &str, keyfile: &str) {
+    let file_path = "wallets.json";
+
+    let mut wallets: Vec<WalletInfo> = if std::path::Path::new(file_path).exists() {
+        let data = std::fs::read_to_string(file_path).unwrap();
+        serde_json::from_str(&data).unwrap_or_else(|_| vec![])
+    } else {
+        vec![]
+    };
+
+    wallets.push(WalletInfo {
+        name: name.to_string(),
+        public_key: public_key.to_string(),
+        keyfile: keyfile.to_string(),
+    });
+
+    let updated = serde_json::to_string_pretty(&wallets).unwrap();
+    std::fs::write(file_path, updated).unwrap();
+    println!("📁 Wallet registered in wallets.json");
+}
+
